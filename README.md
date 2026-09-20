@@ -1,20 +1,20 @@
-# Task Tracker CLI
+# Expense Tracker CLI
 
-A simple command-line task tracker built with Python. The application allows users to create, update, delete, and manage tasks directly from the terminal, with data persisted in a local JSON file.
+A command-line expense tracker built with Python. The application allows users to manage their expenses, view spending summaries, and filter expenses by month.
 
-This project was developed as part of the [Task Tracker project](https://roadmap.sh/projects/task-tracker) from [roadmap.sh](https://roadmap.sh/).
+This project was developed as part of the [Expense Tracker](https://roadmap.sh/projects/expense-tracker) challenge from [roadmap.sh](https://roadmap.sh/).
 
 ## Features
 
-* Add new tasks
-* Update existing tasks
-* Delete tasks
-* Mark tasks as in progress
-* Mark tasks as completed
-* List all tasks
-* Filter tasks by status
-* Persist tasks using a JSON file
-* Validate command-line arguments and task IDs
+* Add expenses with a description and amount
+* Update existing expenses
+* Delete expenses
+* List all expenses
+* View a summary of total expenses
+* View a summary for a specific month
+* Persist expense data locally using JSON
+* Validate command-line arguments and expense IDs
+* Handle invalid inputs and edge cases
 
 ## Requirements
 
@@ -26,135 +26,154 @@ This project was developed as part of the [Task Tracker project](https://roadmap
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/task-tracker.git
+git clone https://github.com/your-username/expense-tracker.git
 ```
 
 Navigate to the project directory:
 
 ```bash
-cd task-tracker
+cd expense-tracker
 ```
 
 ## Usage
 
-Run the application using Python:
+The application runs through the command line using Python.
+
+### Add an expense
 
 ```bash
-python3 task-cli.py <command>
+python3 expense-tracker.py add --description "Lunch" --amount 20
 ```
 
-### Add a task
+Example output:
+
+```text
+Expense added successfully (ID: 1)
+```
+
+### Update an expense
 
 ```bash
-python3 task-cli.py add "Study Python"
+python3 expense-tracker.py update --id 1 --description "Lunch at restaurant" --amount 25
 ```
 
-### Update a task
+### Delete an expense
 
 ```bash
-python3 task-cli.py update 1 "Study Python functions"
+python3 expense-tracker.py delete --id 1
 ```
 
-### Delete a task
+Example output:
+
+```text
+Expense deleted successfully
+```
+
+### List expenses
 
 ```bash
-python3 task-cli.py delete 1
+python3 expense-tracker.py list
 ```
 
-### Mark a task as in progress
+Example output:
+
+```text
+ID  Date        Description          Amount
+1   2026-09-20  Lunch                $20
+2   2026-09-20  Transportation       $10
+```
+
+### View expense summary
 
 ```bash
-python3 task-cli.py mark-in-progress 1
+python3 expense-tracker.py summary
 ```
 
-### Mark a task as completed
+Example output:
+
+```text
+Total expenses: $30
+```
+
+### View monthly summary
+
+To view expenses for a specific month of the current year:
 
 ```bash
-python3 task-cli.py mark-done 1
+python3 expense-tracker.py summary --month 9
 ```
 
-### List all tasks
+Example output:
 
-```bash
-python3 task-cli.py list
+```text
+Total expenses for September: $30
 ```
 
-### List tasks by status
+## Data Storage
 
-```bash
-python3 task-cli.py list todo
-```
+Expenses are stored locally in a JSON file.
 
-```bash
-python3 task-cli.py list in-progress
-```
+Each expense contains information such as its ID, date, description, and amount.
 
-```bash
-python3 task-cli.py list done
-```
-
-## Task Structure
-
-Each task is stored as an object in `tasks.json`:
+Example:
 
 ```json
-{
-  "id": 1,
-  "description": "Study Python",
-  "status": "todo"
-}
+[
+    {
+        "id": 1,
+        "date": "2026-09-20",
+        "description": "Lunch",
+        "amount": 20
+    }
+]
 ```
-
-Tasks use three possible statuses:
-
-* `todo`
-* `in-progress`
-* `done`
 
 ## Project Structure
 
 ```text
-task-tracker/
-├── task-cli.py
-├── tasks.json
+expense-tracker/
+├── expense-tracker.py
+├── expenses.json
 └── README.md
 ```
 
 ## What I Practiced
 
-This project was built to practice fundamental Python and software development concepts, including:
+This project was built to practice fundamental Python and CLI development concepts, including:
 
-* Command-line arguments with `sys.argv`
+* Command-line argument parsing
 * Functions and program organization
-* Conditional logic
 * Lists and dictionaries
-* JSON file handling
-* Reading and writing files
+* JSON data handling
+* File reading and writing
+* Date and time handling
+* Filtering and aggregating data
 * Input validation
 * Error handling
-* Working with file paths
-* Basic data persistence
-* Structuring a CLI application
+* Working with the filesystem
+* Building a command-line interface
 
 ## Challenges
 
-One of the main challenges was handling invalid or incomplete command-line arguments without causing the application to crash.
+One of the main challenges was designing the logic for managing expense data while keeping the CLI commands organized and predictable.
 
-The project also required careful handling of the JSON file, including loading existing tasks, updating data, and keeping the application working when executed from different directories.
+The project also involved handling invalid inputs, validating expense IDs, working with dates, and calculating summaries based on the stored data.
 
 ## Future Improvements
 
 Possible improvements for future versions include:
 
-* Refactoring the CLI argument handling
-* Improving the project's internal data structures
+* Adding expense categories
+* Filtering expenses by category
+* Adding monthly budgets
+* Displaying budget warnings
+* Exporting expenses to CSV
 * Adding automated tests
 * Separating the application into multiple modules
-* Improving error messages
-* Adding more robust input validation
+* Improving the CLI interface
 
 ## Project
 
 This project is based on the roadmap.sh challenge:
 
-[Task Tracker](https://roadmap.sh/projects/task-tracker)
+[Expense Tracker](https://roadmap.sh/projects/expense-tracker)
