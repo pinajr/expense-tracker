@@ -70,13 +70,22 @@ def load_expenses(path, default=None):
     """Read a JSON file and return its contents as a Python object (usually a dict).
     If the file doesn't exist yet, return a default value instead of crashing."""
     # Check if the file exists before trying open it
+    if default is None:
+        default = []
+
     if not os.path.exists(path):
-        return default if default is not None else {}
+        return default
 
     # Open the file in read mode ("r") with utf-8 encoding
     with open(path, "r", encoding="utf-8") as f:
-        # json.load() converts the JSON text into a Python object (dict/list)
-        return json.load(f)
+        content = f.read().strip()
+        if not content:
+            return default
+        try:
+            return json.loads(content)
+        except json.JSONDecodeError:
+            print(f"Warning: {path} is corrupted or invalid. Startint fresh.", file=sys.stderr)
+            return default
 
 
 def save_expanses(path, data):
