@@ -84,31 +84,34 @@ def save_expanses(path, data):
     # Open the file in write mode ("w") — this creates the file if it
     # doesn't exist, or overwrites it if it does
     with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4, ensure_ascii=False, sort_keys=True)
-    
+        json.dump(data, f, indent=4, ensure_ascii=False)
+
+
+def next_id(expenses):
+    if not expenses:
+        return 1
+    return max(item['id'] for item in expenses) + 1
+
 
 def add_expensive(description, amount):
     amount_validate(amount)
-    data = load_expenses('expense.json')
+    expenses = load_expenses('expense.json', default=[])
 
     # Get the next available Expense ID
-    id = max(data.keys(), default=0) + 1
+    new_id = next_id(expenses)
 
     # Add the new expense to the data dictionary
-    data.update(
-        {
-            id: {
-                'CreatedAt': datetime.date.today().isoformat(),
-                'description': description,
-                'amount': amount,
-            }
-        }
-    )
+    expenses.append({   
+        'id': new_id,
+        'CreatedAt': datetime.date.today().isoformat(),
+        'description': description,
+        'amount': amount,
+    })
 
     # Call the functon to write the updated expense to the JSON file
-    save_expanses('expense.json', data)
+    save_expanses('expense.json', expenses)
 
-    print(f"Expense added successfully (ID: {id})")
+    print(f"Expense added successfully (ID: {new_id})")
 
 
 def main() -> None:
