@@ -4,6 +4,8 @@ import json
 import os
 import datetime
 
+EXPENSES_FILE = 'expenses.json'
+
 def build_parser() -> argparse.ArgumentParser:
     """Build and configure the argument parser for the Expense Tracker CLI,
     registering the add, update, list, delete and summary subcommands."""
@@ -40,7 +42,7 @@ def route_commands(parser, args):
     fall back to the help message if the command is missing or invalid."""
     try:
         if args.command == 'add':
-            add_expensive(args.description, args.amount)
+            add_expense(args.description, args.amount)
         elif args.command == 'update':
             pass
         elif args.command == 'delete':
@@ -84,11 +86,11 @@ def load_expenses(path, default=None):
         try:
             return json.loads(content)
         except json.JSONDecodeError:
-            print(f"Warning: {path} is corrupted or invalid. Startint fresh.", file=sys.stderr)
+            print(f"Warning: {path} is corrupted or invalid. Starting fresh.", file=sys.stderr)
             return default
 
 
-def save_expanses(path, data):
+def save_expenses(path, data):
     """Write a Python object (usually a dic) to a JSON file."""
     # Open the file in write mode ("w") — this creates the file if it
     # doesn't exist, or overwrites it if it does
@@ -102,9 +104,9 @@ def next_id(expenses):
     return max(item['id'] for item in expenses) + 1
 
 
-def add_expensive(description, amount):
+def add_expense(description, amount):
     amount_validate(amount)
-    expenses = load_expenses('expense.json', default=[])
+    expenses = load_expenses(EXPENSES_FILE, default=[])
 
     # Get the next available Expense ID
     new_id = next_id(expenses)
@@ -112,13 +114,13 @@ def add_expensive(description, amount):
     # Add the new expense to the data dictionary
     expenses.append({   
         'id': new_id,
-        'CreatedAt': datetime.date.today().isoformat(),
+        'created_at': datetime.date.today().isoformat(),
         'description': description,
         'amount': amount,
     })
 
     # Call the functon to write the updated expense to the JSON file
-    save_expanses('expense.json', expenses)
+    save_expenses(EXPENSES_FILE, expenses)
 
     print(f"Expense added successfully (ID: {new_id})")
 
