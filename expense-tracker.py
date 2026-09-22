@@ -3,6 +3,7 @@ import sys
 import json
 import os
 import datetime
+from tabulate import tabulate
 
 EXPENSES_FILE = 'expenses.json'
 
@@ -48,7 +49,7 @@ def route_commands(parser, args):
         elif args.command == 'delete':
             pass
         elif args.command == 'list':
-            pass
+            list_expense()
         elif args.command == 'summary':
             pass
         else:
@@ -146,6 +147,33 @@ def update_expense(expense_id, description, amount):
     else:
         # This runs only if the loop completed without hitting 'break'
         print(f"Expense (ID: {expense_id}) not found", file=sys.stderr) 
+
+
+def list_expense():
+    """Load all expenses and print them as a formatted table,
+    with one row per expense and columns for id, date,
+    description and amount."""
+    expenses = load_expenses(EXPENSES_FILE, default=[])
+    
+    # Avoid printing an empty/awkward table when there's nothing to show
+    if not expenses:
+       print("No expenses found.")
+       return
+
+    # Render the list of expense dicts as a grid-style table,
+    # mapping each dict key to a human-readable column header
+    print(
+        tabulate(
+            expenses,
+            headers={
+                "id": "ID",
+                "created_at": "Date",
+                "description": "Description",
+                "amount": "Amount",
+            },
+            tablefmt="grid"
+        )
+    )
 
 
 def main() -> None:
