@@ -98,12 +98,17 @@ def save_expenses(path, data):
 
 
 def next_id(expenses):
+    """Return the next available expense id: one greater than the
+    highest existing id, or 1 if the list is empty."""
     if not expenses:
         return 1
     return max(item['id'] for item in expenses) + 1
 
 
 def add_expense(description, amount):
+    """Validate the amount, then create a new expense with a unique
+    id and today's date, appending it to the list of expenses and
+    persisting the updated list to disk."""
     amount_validate(amount)
     expenses = load_expenses(EXPENSES_FILE, default=[])
 
@@ -154,7 +159,7 @@ def list_expense():
     with one row per expense and columns for id, date,
     description and amount."""
     expenses = load_expenses(EXPENSES_FILE, default=[])
-    
+
     # Avoid printing an empty/awkward table when there's nothing to show
     if not expenses:
        print("No expenses found.")
