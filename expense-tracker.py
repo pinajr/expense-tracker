@@ -3,6 +3,7 @@ import sys
 import json
 import os
 import datetime
+import calendar
 from tabulate import tabulate
 
 EXPENSES_FILE = 'expenses.json'
@@ -51,7 +52,7 @@ def route_commands(parser, args):
         elif args.command == 'list':
             list_expense()
         elif args.command == 'summary':
-            pass
+            summary_expense(args.month)
         else:
             parser.print_help()
     except ValueError as e:
@@ -196,6 +197,32 @@ def list_expense():
             tablefmt="grid"
         )
     )
+
+
+def summary_expense(month):
+    """Print the total of all expenses, or the total for a specific
+    month (1-12) when one is provided."""
+    expenses = load_expenses(EXPENSES_FILE, default=[])
+
+    # No month filter: sum every expense and print the grand total
+    if month is None:
+        total_amount = sum(expense['amount'] for expense in expenses)
+        print(f"Total expenses: ${total_amount:.2f}")
+        return
+
+    # Validate the month range before doing any work with it
+    if month < 1 or month > 12:
+        print(f"Error: month must be between 1 and 12, got {month}", file=sys.stderr)
+        return
+    
+    # Sum only the expenses whose created_at falls in the given month
+    total_month = sum(
+        expense['amount']
+        for expense in expenses
+        if datetime.date.fromisoformat(expense['created_at']).month == month
+    )
+    month_name = calendar.month_name[month]
+    print(f"Total expanses for {month_name}: ${total_month:.2f}")
 
 
 def main() -> None:
