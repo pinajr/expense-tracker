@@ -44,7 +44,7 @@ def route_commands(parser, args):
         if args.command == 'add':
             add_expense(args.description, args.amount)
         elif args.command == 'update':
-            pass
+            update_expense(args.id, args.description, args.amount)
         elif args.command == 'delete':
             pass
         elif args.command == 'list':
@@ -92,8 +92,6 @@ def load_expenses(path, default=None):
 
 def save_expenses(path, data):
     """Write a Python object (usually a dic) to a JSON file."""
-    # Open the file in write mode ("w") — this creates the file if it
-    # doesn't exist, or overwrites it if it does
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
@@ -123,6 +121,31 @@ def add_expense(description, amount):
     save_expenses(EXPENSES_FILE, expenses)
 
     print(f"Expense added successfully (ID: {new_id})")
+
+
+def update_expense(expense_id, description, amount):
+    """Update the description and/or amount of an existing expense.
+    Only the fields explicitly provided (not None) are overwritten,
+    leaving the rest of the expense unchanged."""
+    amount_validate(amount)
+    expenses = load_expenses(EXPENSES_FILE, default=[])
+
+    # Search for the expense matching the given id
+    for expense in expenses:
+        # Only overwrite fields that were actually provided
+        if expense['id'] == expense_id:
+            if description is not None:
+                expense['description'] = description
+            if amount is not None:
+                expense['amount'] = amount
+            
+            # Persist changes and confirm to the user
+            save_expenses(EXPENSES_FILE, expenses)
+            print(f"Expense (ID: {expense_id}) updated successfully")
+            break
+    else:
+        # This runs only if the loop completed without hitting 'break'
+        print(f"Expense (ID: {expense_id}) not found", file=sys.stderr) 
 
 
 def main() -> None:
