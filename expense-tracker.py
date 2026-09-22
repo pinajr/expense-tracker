@@ -47,7 +47,7 @@ def route_commands(parser, args):
         elif args.command == 'update':
             update_expense(args.id, args.description, args.amount)
         elif args.command == 'delete':
-            pass
+            delete_expense(args.id)
         elif args.command == 'list':
             list_expense()
         elif args.command == 'summary':
@@ -152,6 +152,23 @@ def update_expense(expense_id, description, amount):
     else:
         # This runs only if the loop completed without hitting 'break'
         print(f"Expense (ID: {expense_id}) not found", file=sys.stderr) 
+
+
+def delete_expense(expense_id):
+    """Remove the expense with the given id from the list, if it exists,
+    and persist the change. Prints a not-found message otherwise."""
+    expenses = load_expenses(EXPENSES_FILE, default=[])
+
+    # Check whether the id exists before rebuilding the list
+    if not any(expense['id'] == expense_id for expense in expenses):
+        print(f"Expense (ID: {expense_id}) not found", file=sys.stderr)
+        return
+
+    # Keep every expense except the one being deleted
+    expenses = [expense for expense in expenses if expense['id'] != expense_id]
+
+    save_expenses(EXPENSES_FILE, expenses)
+    print(f"Expense (ID: {expense_id}) deleted successfully")
 
 
 def list_expense():
