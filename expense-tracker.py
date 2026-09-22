@@ -70,13 +70,23 @@ def amount_validate(amount):
         raise ValueError("A non-negative value is required")
 
 
+def description_validade(description):
+    """Skip validation if no description was provided (relevant for
+    update, where it's optional)."""
+    if description is None:
+        return
+    if not description.strip():
+        raise ValueError("Description cannot be empty")
+
+
 def load_expenses(path, default=None):
-    """Read a JSON file and return its contents as a Python object (usually a dict).
-    If the file doesn't exist yet, return a default value instead of crashing."""
-    # Check if the file exists before trying open it
+    """Read a JSON file and return its contents as a Python object (a list of
+    expense dicts). If the file doesn't exist yet, return a default value
+    instead of crashing."""
     if default is None:
         default = []
 
+    # Check if the file exists before trying open it
     if not os.path.exists(path):
         return default
 
@@ -93,7 +103,7 @@ def load_expenses(path, default=None):
 
 
 def save_expenses(path, data):
-    """Write a Python object (usually a dic) to a JSON file."""
+    """Write a Python object (a list of expense dicts) to a JSON file."""
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
@@ -116,7 +126,7 @@ def add_expense(description, amount):
     # Get the next available Expense ID
     new_id = next_id(expenses)
 
-    # Add the new expense to the data dictionary
+   # Add the new expense to the list
     expenses.append({   
         'id': new_id,
         'created_at': datetime.date.today().isoformat(),
@@ -222,7 +232,7 @@ def summary_expense(month):
         if datetime.date.fromisoformat(expense['created_at']).month == month
     )
     month_name = calendar.month_name[month]
-    print(f"Total expanses for {month_name}: ${total_month:.2f}")
+    print(f"Total expenses for {month_name}: ${total_month:.2f}")
 
 
 def main() -> None:
